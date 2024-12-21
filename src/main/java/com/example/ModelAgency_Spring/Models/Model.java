@@ -2,17 +2,16 @@ package com.example.ModelAgency_Spring.Models;
 
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "ModelApplications")
-public class ModelApplication {
+@Table(name = "Models")
+public class Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int applicationId;
+    private int modelId;
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -28,7 +27,7 @@ public class ModelApplication {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dob;
 
-    private LocalDateTime applicationDate = LocalDateTime.now();
+    private int age;
 
     private String gender;
 
@@ -49,28 +48,36 @@ public class ModelApplication {
     private String description;
 
     private String imgUrl1;
-    private String imgUrl2;
-    private String imgUrl3;
-    private String state;
 
-    private LocalDateTime stateDate;
+    private String imgUrl2;
+
+    private String imgUrl3;
 
     @Column(precision = 10)
     private double rate;
 
     private String category;
 
-    @Column(nullable = true)
-    private int age;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean availability;
+
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdOn;
+
+    private LocalDateTime modifiedOn;
+
+    @ManyToOne
+    @JoinColumn(name = "createdBy", referencedColumnName = "userId")
+    private User createdBy;
 
     // Getters and Setters
 
-    public int getApplicationId() {
-        return applicationId;
+    public int getModelId() {
+        return modelId;
     }
 
-    public void setApplicationId(int applicationId) {
-        this.applicationId = applicationId;
+    public void setModelId(int modelId) {
+        this.modelId = modelId;
     }
 
     public String getName() {
@@ -111,14 +118,6 @@ public class ModelApplication {
 
     public void setDob(Date dob) {
         this.dob = dob;
-    }
-
-    public LocalDateTime getApplicationDate() {
-        return applicationDate;
-    }
-
-    public void setApplicationDate(LocalDateTime applicationDate) {
-        this.applicationDate = applicationDate;
     }
 
     public String getGender() {
@@ -199,22 +198,6 @@ public class ModelApplication {
 
     public void setImgUrl3(String imgUrl3) {
         this.imgUrl3 = imgUrl3;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public LocalDateTime getStateDate() {
-        return stateDate;
-    }
-
-    public void setStateDate(LocalDateTime stateDate) {
-        this.stateDate = stateDate;
     }
 
     public double getRate() {
