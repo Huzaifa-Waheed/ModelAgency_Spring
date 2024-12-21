@@ -22,13 +22,7 @@ public class ModelAgencySpringApplication {
 
 	}
 
-	@GetMapping("/get")
-	public ResponseEntity<?> GetNames(){
-		List<String> n = new ArrayList<>();
-		n.add("Huzaifa");
-		n.add("Noshad");
-		return new ResponseEntity<>(n, HttpStatus.OK);
-	}
+
 
 	@PostMapping("/SubmitApplication")
 	public void ModelApplication(){
