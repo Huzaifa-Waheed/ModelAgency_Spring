@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/accounts")
@@ -35,9 +36,12 @@ public class AccountController {
         SignInDTO signInDTO = new SignInDTO();
         signInDTO.setEmail(userEmail);
         signInDTO.setPassword(password);
-        if(accountService.verify(signInDTO) != "Authentication failed"
-                && accountService.verify(signInDTO) != "Invalid credentials"){
+        if(!Objects.equals(accountService.verify(signInDTO), "Authentication failed")
+                && !Objects.equals(accountService.verify(signInDTO), "Invalid credentials")){
             User user = accountRepo.findByEmail(userEmail);
+            if(Objects.equals(user.getEmail(), "admin@gmail.com")){
+                return new ResponseEntity<>("Invalid Credentials",HttpStatus.BAD_REQUEST);
+            }
             System.out.println(user);
             return new ResponseEntity<Integer>(user.getUserId(),HttpStatus.OK);
         }
@@ -56,6 +60,15 @@ public class AccountController {
         signInDTO.setPassword(password);
         if(accountService.verify(signInDTO) != "Authentication failed"
                 && accountService.verify(signInDTO) != "Invalid credentials"){
+            User user = accountRepo.findByEmail(userEmail);
+            System.out.println(user);
+
+            System.out.println(user.getEmail());
+            if(!Objects.equals(user.getEmail(), "admin@gmail.com"))
+            {
+                System.out.println("why in");
+                return new ResponseEntity<>("Invalid Credentials",HttpStatus.BAD_REQUEST);
+            }
             return ResponseEntity.ok("Logged in successfully");
         }
         else{
@@ -90,7 +103,7 @@ public class AccountController {
             user.setPassword(encoder.encode(password)); // Hash password
             user.setAddress(address);
             user.setPhone(phone);
-            user.setRole("client");
+            user.setRole("admin");
             user.setCreatedOn(LocalDateTime.now());
 
             // Save user

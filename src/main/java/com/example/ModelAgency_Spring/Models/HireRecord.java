@@ -34,5 +34,72 @@ public class HireRecord {
 
     private LocalDateTime requestedDate;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getClient(){
+        return client;
+    }
+
+    public void setClient(User client){
+        this.client = client;
+    }
+
+    public Model getModel(){
+        return model;
+    }
+
+    public void setModel(Model model){
+        this.model = model;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getRequestedDate() {
+        return requestedDate;
+    }
+
+    public void setRequestedDate(LocalDateTime requestedDate) {
+        this.requestedDate = requestedDate;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public LocalDateTime getStateDate() {
+        return stateDate;
+    }
+
+    public void setStateDate(LocalDateTime stateDate) {
+        this.stateDate = stateDate;
+    }
 }
 

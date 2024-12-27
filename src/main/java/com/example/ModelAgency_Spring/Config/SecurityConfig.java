@@ -28,8 +28,8 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/accounts/register","/accounts/login","/accounts/adminlogin","/admin/notifications",
-                                "/admin/applications","/client/hiringmodel","/client/clientrequest/{id}","/model/delete/{id}",
+                        .requestMatchers("/accounts/register","/accounts/login","/accounts/adminlogin","/admin/notifications","/applications/submit",
+                                "/admin/applications","/client/hiringmodel","/client/clientrequest/{id}","/model/delete/{id}","/client/accept/{id}","/client/reject/{id}",
                                 "/applications/accept/{id}","/applications/reject/{id}","/model/add","/model/edit","/model/show","/model/getmodel/{id}"
                                 ,"/error")
                         .permitAll()

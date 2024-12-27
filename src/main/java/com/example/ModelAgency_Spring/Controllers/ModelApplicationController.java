@@ -1,8 +1,11 @@
 package com.example.ModelAgency_Spring.Controllers;
 
 import com.example.ModelAgency_Spring.Models.DTOs.ModelApplicationDTO;
+import com.example.ModelAgency_Spring.Models.Model;
 import com.example.ModelAgency_Spring.Models.ModelApplication;
 import com.example.ModelAgency_Spring.Services.ModelApplicationService;
+import com.example.ModelAgency_Spring.Services.ModelService;
+import com.example.ModelAgency_Spring.Services.SendinBlueService;
 import com.example.ModelAgency_Spring.Utility.Enums.States;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,11 @@ public class ModelApplicationController {
     @Autowired
     ModelApplicationService modelService;
 
+    @Autowired
+    ModelService modService;
+    @Autowired
+    SendinBlueService sendinBlueService;
+
     @PostMapping("/submit")
     public ResponseEntity<?> submitApplication(@RequestPart("restData") String modApplDTO,
                                               @RequestPart("imgUrl1") MultipartFile imgUrl1,
@@ -63,7 +71,7 @@ public class ModelApplicationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving application: " + e.getMessage());
         }
 
-        return  new ResponseEntity<>("Form submitted successfully", HttpStatus.OK);
+        return ResponseEntity.ok("form submitted");
     }
 
     private void setModelApplicationData(ModelApplication modelApplication,Map<String, String> formData){
@@ -89,6 +97,7 @@ public class ModelApplicationController {
             modelApplication.setDescription(formData.get("description"));
             modelApplication.setRate(Double.parseDouble(formData.get("rate")));
             modelApplication.setCategory(formData.get("category"));
+            modelApplication.setAge((LocalDateTime.now().getYear()- dateofBirth.getYear() - 2000));
             modelApplication.setState(States.PENDING.toString());
             modelApplication.setStateDate(LocalDateTime.now());
 
@@ -127,6 +136,73 @@ public class ModelApplicationController {
         System.out.println("Username: " + username);
         System.out.println("Password: " + password);
         return "Form submitted successfully!";
+    }
+
+    @PostMapping("/accept/{id}")
+    public ResponseEntity<?> acceptModelApplication(@PathVariable("id") Integer modelApplId){
+        try{
+            ModelApplication ma = modelService.findById(modelApplId);
+            if (ma != null){
+                Model model = new Model();
+
+                createModel(model,ma);
+
+                modService.saveModel(model);
+
+                ma.setState(States.ACCEPTED.toString());
+                ma.setStateDate(LocalDateTime.now());
+
+                modelService.changeApplicationState(ma);
+                sendinBlueService.sendEmail(model.getEmail(), "Application Status", "ACCEPTED!");
+                return new ResponseEntity<>("Hire request applied successfully",HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Model application not found",HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PostMapping("/reject/{id}")
+    public ResponseEntity<?> rejectApplication(@PathVariable("id") Integer modelApplId){
+        try{
+            ModelApplication modelApplication = modelService.findById(modelApplId);
+            if(modelApplication != null){
+                modelApplication.setState(States.REJECTED.toString());
+                modelApplication.setStateDate(LocalDateTime.now());
+
+                modelService.changeApplicationState(modelApplication);
+                return new ResponseEntity<>("Hire request rejected",HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>("Model application not found",HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+
+    private void createModel(Model model, ModelApplication ma){
+        model.setName(ma.getName());
+        model.setEmail(ma.getEmail());
+        model.setPhone(ma.getPhone());
+        model.setLocation(ma.getLocation());
+        model.setDob(ma.getDob());
+        model.setGender(ma.getGender());
+        model.setWeight(ma.getWeight());
+        model.setHeight(ma.getHeight());
+        model.setHair(ma.getHair());
+        model.setHips(ma.getHips());
+        model.setEyeColor(ma.getEyeColor());
+        model.setDescription(ma.getDescription());
+        model.setRate(ma.getRate());
+        model.setCategory(ma.getCategory());
+        model.setAge(ma.getAge());
+        model.setImgUrl1(ma.getImgUrl1());
+        model.setImgUrl2(ma.getImgUrl2());
+        model.setImgUrl3(ma.getImgUrl3());
+        model.setCreatedOn(ma.getStateDate());
+        model.setAvailability(true);
     }
 
 }

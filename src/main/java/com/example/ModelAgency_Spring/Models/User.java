@@ -96,5 +96,16 @@ public class User {
     public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + userId +
+                ", username='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
+
+
 }
 

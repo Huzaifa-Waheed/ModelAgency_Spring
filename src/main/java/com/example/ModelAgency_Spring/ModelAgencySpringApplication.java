@@ -14,14 +14,13 @@ import java.util.List;
 
 @SpringBootApplication
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+//@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class ModelAgencySpringApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ModelAgencySpringApplication.class, args);
 
 	}
-
 
 
 	@PostMapping("/SubmitApplication")
